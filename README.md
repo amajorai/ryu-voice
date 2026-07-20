@@ -1,0 +1,58 @@
+# ryu-voice
+
+Voice for Ryu — the universal TTS sidecar: a self-contained Python HTTP front over several text-to-speech engines (Kokoro, Kitten, Pocket), part of Ryu's speech data path.
+
+> **Read-only mirror.** Developed in https://github.com/amajorai/ryu —
+> please open issues and pull requests there, not on this repository.
+
+## Source & build
+
+The **source of record** for the universal Ryu TTS sidecar — a self-contained
+Python HTTP front over several text-to-speech engines. Install its
+dependencies (`pip install -r sidecar/requirements.txt`) and run
+`python -m ryu_tts` from `sidecar/`; Core manages it as a sidecar in a
+full Ryu install.
+
+## License
+
+Apache-2.0 — see [LICENSE](./LICENSE).
+
+---
+
+# com.ryu.voice — Voice
+
+The voice data path: speech-to-text (whisper.cpp) and text-to-speech (OuteTTS +
+the universal Ryu TTS sidecar), plus the installable TTS model catalog. The app
+is the governance shell over Core's in-crate voice module — no new backend logic
+of its own, just the manifest that names the capability surface.
+
+## Parts
+
+- **`sidecar/` — the Ryu TTS sidecar (Python, out-of-process).** A thin FastAPI
+  runtime (`ryu-tts-sidecar`) that fronts many TTS engines behind one contract
+  (`GET /health`, `GET /engines`, `POST /generate` → `audio/wav`, `POST /unload`).
+  Fenced out of the bun/turbo workspace; runs on its own Python toolchain. Core
+  owns lifecycle, model downloads, the catalog, and the `?engine=` selector on
+  `/api/voice/speak`; this process is a pure inference runtime (the same way Core
+  manages whisper.cpp's `whisper-server` and sd.cpp's `sd-server`). See
+  `sidecar/README.md`.
+- **Manifest** — the Core fixture `apps/core/src/plugin_manifest/fixtures/voice.plugin.json`
+  (id `com.ryu.voice`). `runnables: []`, no grants: STT/TTS ride Core's existing
+  `/api/voice/*` endpoints; this app just declares the capability boundary.
+
+## Engine registry (swap seam)
+
+The HTTP layer never grows a per-engine branch. Adding an engine is one
+`EngineConfig` row in `ryu_tts/registry.py` plus one
+`ryu_tts/backends/<module>.py` implementing the `TtsBackend` protocol
+(`load`/`generate`/`unload`/`is_loaded`). Seeded: **`kokoro`** (Kokoro 82M — the
+Ryu default, CPU-only ONNX; Core auto-downloads weights + voice pack during
+onboarding and injects them via `RYU_KOKORO_MODEL`/`RYU_KOKORO_VOICES`),
+`kitten` (KittenTTS), and `pocket` (Kyutai Pocket TTS, voice cloning via
+`reference_audio`). Heavy inference deps are optional extras and imported lazily
+inside backend methods, so a missing dep degrades only that one engine.
+
+## Run
+
+`bun run dev:tts`, or from `sidecar/`: `pip install -e ".[kokoro]"` then
+`python -m ryu_tts` (serves `127.0.0.1:8085`, `RYU_TTS_PORT` to override).
