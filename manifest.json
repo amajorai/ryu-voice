@@ -1,0 +1,33 @@
+{
+  "id": "@ryu/voice",
+  "name": "Voice",
+  "version": "1.0.0",
+  "category": "Media & Voice",
+  "description": "Voice data path: speech-to-text transcription (whisper.cpp) and text-to-speech (OuteTTS + the universal Ryu TTS sidecar), plus the installable TTS model catalog. Governance shell over the in-crate voice module.",
+  "tagline": "Speech in, speech out",
+  "keywords": ["voice", "tts", "stt", "speech", "transcription"],
+  "icon": "audio-wave-01",
+  "iconDither": { "from": 221, "to": "transparent", "direction": "down" },
+  "surfaces": {
+    "gateway": { "support": "none" },
+    "core": { "support": "full" },
+    "desktop": { "support": "full" },
+    "island": { "support": "full" },
+    "mobile": { "support": "full" },
+    "extension": { "support": "full" },
+    "web": { "support": "full" },
+    "cli": { "support": "full" }
+  },
+  "engines": {
+    "ryu": ">=0.1.0"
+  },
+  "runnables": [],
+  "permission_grants": [],
+  "permission_levels": [
+    {
+      "id": "voice.models.manage",
+      "label": "Can manage voices",
+      "description": "Install and remove text-to-speech voice models, each of which downloads to this node and occupies disk."
+    }
+  ]
+}
