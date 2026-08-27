@@ -1,0 +1,25 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ryu.voice",
+  "version": "0.1.14",
+  "description": "Voice data path: speech-to-text transcription (whisper.cpp) and text-to-speech (OuteTTS + the universal Ryu TTS sidecar), plus the installable TTS model catalog. Governance shell over the in-crate voice module.",
+  "author": {
+    "name": "Ryu",
+    "url": "https://ryuhq.com"
+  },
+  "homepage": "https://github.com/amajorai/ryu-voice",
+  "repository": "https://github.com/amajorai/ryu-voice",
+  "keywords": [
+    "voice",
+    "tts",
+    "stt",
+    "speech",
+    "transcription"
+  ],
+  "extensions": {
+    "com.ryuhq.ryu": {
+      "id": "@ryu/voice",
+      "displayName": "Voice"
+    }
+  }
+}
