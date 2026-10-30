@@ -1,0 +1,8 @@
+# Base server runtime (no engine deps — those install per-engine, see pyproject extras).
+fastapi>=0.110
+uvicorn>=0.29
+pydantic>=2.6
+numpy>=1.24
+scipy>=1.10
+anyio>=4.14.2
+huggingface_hub>=0.23
